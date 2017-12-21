@@ -1,11 +1,29 @@
-<html>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
   <head>
     <title>Betica Shop</title>
     <meta charset="utf-8">
-    <meta name="author" content="YOUR NAME">
+    <meta name="author" content="Jonathan Lucios C. Polancos">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="main.scss" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   </head>
   <body>
-    <div id="content"></div>
+    <div class="page-header">
+      <h1>Betica Shop</h1>
+    </div>
+
+    <div id="content">
+    </div>
+
+    <footer>
+      <div class="container">
+        <p class="text-muted">Copyright 2014</p>
+      </div>
+    </footer>
+
     <script type="text/javascript">
       var info = {
         "items": {
@@ -66,9 +84,115 @@
         }
       };
        
-      // enter your code here
-      // render the items in the info using native Javascript or jQuery
+
+      for (var item in info.items) {
+        var unit = info.items[item];
+        if(hasParent(unit)){
+            var manufacturer = unit.hasOwnProperty('manufacturer') && unit.manufacturer;
+            var title = unit.hasOwnProperty('title') && unit.title;
+            var price = unit.hasOwnProperty('price') && unit.price;
+            var releaseDate = unit.hasOwnProperty('releaseDate') && unit.releaseDate;
+            appendItems(manufacturer,title,price,releaseDate, unit.parent);
+        }
+        else
+          appendCategory(item, info.items[item].title);
+
+     }
+
+     function hasParent(obj){
+       var hasParent = false;
+       if(obj.hasOwnProperty('parent')){
+         
+         for (var item in info.items) {
+           if(obj.parent==item)
+            hasParent = true;
+         }
+         
+       }
+       
+       return hasParent;
+
+     }
+
+     function appendCategory(id, title){
+        var container = document.createElement("div");
+        container.id += id;
+
+        var header = document.createElement("div");
+        header.className += "page-header secondary";
+
+        var category = document.createElement("h2");
+        var node = document.createTextNode(title);
+
+        category.appendChild(node);
+        header.appendChild(category);
+
+        container.appendChild(header);
+
+        var element = document.getElementById("content");
+        element.appendChild(container);
+     }
+
+     function appendItems(manufacturer, name, price, releaseDate, parent){
+        //create panel div
+        var container = document.createElement("div");
+        container.className += "panel panel-default";
+
+        /** creates panel heading **/
+
+        var heading = document.createElement("div");
+        heading.className += "panel-heading";
+
+        var title = document.createElement("h3");
+        title.className += "panel-title";
+        var titleNode = document.createTextNode(name);
+        title.appendChild(titleNode);
+
+        heading.appendChild(title);
+
+         /** endof panel heading **/
+
+        /** creates panel body **/
+        var body = document.createElement("div");
+        body.className += "panel-body";
+
+        var content = document.createElement("h3");
+        content.className += "panel-title";
+        var text = "Manufactured by " + manufacturer + ", to be released in " + getYearFromDate(releaseDate);
+        var contentNode = document.createTextNode(text);
+        content.appendChild(contentNode);
+
+        var button = document.createElement("button");
+        button.className += "btn btn-lg btn-success";
+        button.type += "button";
+        var buttonNode = document.createTextNode("$" + price);
+        button.appendChild(buttonNode);
+
+
+        //append to panel-body
+        body.appendChild(content);
+        body.appendChild(button);
+
+        /** endof panel body **/
+
+        //append to panel container
+        container.appendChild(heading);
+        container.appendChild(body);
+
+        console.log('parent: ', parent);
+        var category = document.getElementById(parent);
+        category.appendChild(container);
+
+
+     }
+
+     function getYearFromDate(date){
+       d = new Date(date);
+       return d.getFullYear();
+     }
 
     </script>
+
+    
 </body>
 </html>
